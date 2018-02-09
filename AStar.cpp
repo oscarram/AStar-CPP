@@ -243,13 +243,13 @@ omp_set_num_threads(4);
 		printf("%lu\n", MaxListOSize);
 		printf("%lu\n", MaxListCSize);
 
-		printf("%f\n", astar[astar[goal].parent].g);
+		printf("%f\n", astar[goal].g);
 		unsigned long traveler=goal;
 		unsigned long travelerDad=0;
 		double j=0;
 		while(traveler!=start){
 			travelerDad=astar[traveler].parent;
-			j=j+PitagorasD(nodes[traveler].lat, nodes[traveler].lon, nodes[travelerDad].lat, nodes[travelerDad].lon);
+			j=j+HarvesineD(nodes[traveler].lat, nodes[traveler].lon, nodes[travelerDad].lat, nodes[travelerDad].lon);
 			traveler=travelerDad;
 		}
 		printf("%f\n", j);

@@ -9,7 +9,6 @@ typedef struct{
 
 
 struct Compare { double val; unsigned long index; };    
-
 #pragma omp declare reduction(minimum : struct Compare : omp_out = omp_in.val < omp_out.val ? omp_in : omp_out)
 
 unsigned short push2Queue (QueueStar* Que, AStarNode* Member, unsigned long PosArray){
@@ -119,10 +118,7 @@ unsigned short extract4Closed( QueueStar* Que, AStarNode* Members, unsigned long
 	unsigned long OldPosInQue;
 	struct Compare FindMIN;
 
-	if(Que->QSize != 0){
-
-		if ((Members+PosArray)->whq ==CLOSED){
-							
+					
 			value=(*(Que->base+Que->QSize-1));// We take the value of the ID on the top member of Queue
 			//This member should have set the PosInQueue value to QSize-1
 			(*(Que->base+(Members+PosArray)->PosInQueue))=value;//We substitute the extracting by the top element in the Queue of ID's							
@@ -147,22 +143,10 @@ unsigned short extract4Closed( QueueStar* Que, AStarNode* Members, unsigned long
 				else{
 					UpdateMinimum(Que, Members);
 				}
-
-				//UpdateMinimum(Que, Members);
 			}
-
+				//UpdateMinimum(Que, Members);
 			(Members+PosArray)->PosInQueue=0; // The extracted member has no position in array. 
 			
-			
-		}
-		else{
-			
-			return 2; //Extracting from different Queue
-		}		
-	}
-	else{
-		return 1; //Extracting From Empty List
-	}	
 	return 0;
 }
 
@@ -175,48 +159,36 @@ unsigned short extract4Open( QueueStar* Que, AStarNode* Members, unsigned long P
 	unsigned long OldPosInQue;
 	struct Compare FindMIN;
 
-	if(Que->QSize != 0){
-
-		if ((Members+PosArray)->whq ==OPEN){
 							
-			value=(*(Que->base+Que->QSize-1));// We take the value of the ID on the top member of Queue
-			//This member should have set the PosInQueue value to QSize-1
-			(*(Que->base+(Members+PosArray)->PosInQueue))=value;//We substitute the extracting by the top element in the Queue of ID's							
-			(Members+value)->PosInQueue=(Members+PosArray)->PosInQueue; //We update the position for the top not anymore to the top
-			
-			(Members+PosArray)->whq=NONE; //The extracted member we set to NONE
-			Que->QSize=Que->QSize-1; //We decrease the value of the Queue in one;
+	value=(*(Que->base+Que->QSize-1));// We take the value of the ID on the top member of Queue
+	//This member should have set the PosInQueue value to QSize-1
+	(*(Que->base+(Members+PosArray)->PosInQueue))=value;//We substitute the extracting by the top element in the Queue of ID's							
+	(Members+value)->PosInQueue=(Members+PosArray)->PosInQueue; //We update the position for the top not anymore to the top
+	
+	(Members+PosArray)->whq=NONE; //The extracted member we set to NONE
+	Que->QSize=Que->QSize-1; //We decrease the value of the Queue in one;
 
-			if(((Members+PosArray)->PosInQueue)==(Que->PointsMinF)){
-				//UpdateMinimum(Que, Members);
-				if (Que->QSize>200){
-					omp_set_num_threads(4);
-					FindMIN=MinimizerFind(Que, Members);
-					Que->MinF=FindMIN.val;
-					Que->PointsMinF=FindMIN.index;
+	if(((Members+PosArray)->PosInQueue)==(Que->PointsMinF)){
+		//UpdateMinimum(Que, Members);
+		if (Que->QSize>200){
+			omp_set_num_threads(4);
+			FindMIN=MinimizerFind(Que, Members);
+			Que->MinF=FindMIN.val;
+			Que->PointsMinF=FindMIN.index;
 
-				}else if (Que->QSize>20) {
-					omp_set_num_threads(2);
-					FindMIN=MinimizerFind(Que, Members);
-					Que->MinF=FindMIN.val;
-					Que->PointsMinF=FindMIN.index;
-				}
-				else{
-					UpdateMinimum(Que, Members);
-				}
-
-			}
-
-			(Members+PosArray)->PosInQueue=0; // The extracted member has no position in array. 
-
+		}else if (Que->QSize>20) {
+			omp_set_num_threads(2);
+			FindMIN=MinimizerFind(Que, Members);
+			Que->MinF=FindMIN.val;
+			Que->PointsMinF=FindMIN.index;
 		}
 		else{
-			
-			return 2; //Extracting from different Queue
-		}		
+			UpdateMinimum(Que, Members);
+		}
 	}
-	else{
-		return 1; //Extracting From Empty List
-	}	
+
+	(Members+PosArray)->PosInQueue=0; // The extracted member has no position in array. 
+
+		
 	return 0;
 }

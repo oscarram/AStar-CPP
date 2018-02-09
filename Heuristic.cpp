@@ -30,13 +30,20 @@ double sind(double x) {
 }
 
 volatile double HarvesineD (double lat1, double lon1, double lat2, double lon2){
-//	double EarthR=6378137.0;
+
 	double EarthR=6371000.0;
 	double Dlat=(lat2-lat1);
 	double Dlon=(lon2-lon1);
-	double a=sind(Dlat*0.5)*sind(Dlat*0.5);
-	a=a+sind(90.0-lat2)*sind(90.0-lat1)*sind(Dlon)*sind(Dlon);
-	double harvesine=2.0*atan2(sqrt(a), sqrt(1.0-a));
+	
+	double a=sind(Dlat*0.5);
+	double b=sind(90.0-lat2);
+	double c=sind(90.0-lat1);
+	double d=sind(Dlon*0.5);	
+	a=a*a+b*c*d*d;
+	double e=sqrt(a);
+	double k=sqrt(1.0-a);	
+	double l=atan2(e, k);
+	double harvesine=2.0*l;
 	return EarthR*harvesine; 
 }
 
