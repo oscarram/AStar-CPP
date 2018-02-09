@@ -131,15 +131,23 @@ unsigned short extract4Closed( QueueStar* Que, AStarNode* Members, unsigned long
 			Que->QSize=Que->QSize-1; //We decrease the value of the Queue in one;		
 			
 			if(((Members+PosArray)->PosInQueue)==(Que->PointsMinF)){
-				if (Que->QSize>2000){
+				if (Que->QSize>8000){
+					omp_set_num_threads(4);
 					FindMIN=MinimizerFind(Que, Members);
 					Que->MinF=FindMIN.val;
 					Que->PointsMinF=FindMIN.index;
-
-				}else {
+				}
+				else if (Que->QSize>100) {
+					omp_set_num_threads(2);
+					FindMIN=MinimizerFind(Que, Members);
+					Que->MinF=FindMIN.val;
+					Que->PointsMinF=FindMIN.index;
+				}
+				else{
 					UpdateMinimum(Que, Members);
 				}
 
+				//UpdateMinimum(Que, Members);
 			}
 
 			(Members+PosArray)->PosInQueue=0; // The extracted member has no position in array. 
@@ -180,16 +188,21 @@ unsigned short extract4Open( QueueStar* Que, AStarNode* Members, unsigned long P
 
 			if(((Members+PosArray)->PosInQueue)==(Que->PointsMinF)){
 				//UpdateMinimum(Que, Members);
-				if (Que->QSize>500){
-
+				if (Que->QSize>200){
+					omp_set_num_threads(4);
 					FindMIN=MinimizerFind(Que, Members);
 					Que->MinF=FindMIN.val;
 					Que->PointsMinF=FindMIN.index;
 
-				}else {
+				}else if (Que->QSize>20) {
+					omp_set_num_threads(2);
+					FindMIN=MinimizerFind(Que, Members);
+					Que->MinF=FindMIN.val;
+					Que->PointsMinF=FindMIN.index;
+				}
+				else{
 					UpdateMinimum(Que, Members);
 				}
-				
 
 			}
 

@@ -29,7 +29,9 @@ unsigned long connsCounter=0;
 
 unsigned long* openListBase;
 unsigned long* closedListBase;
-unsigned long MaxListSize;
+
+unsigned long MaxListOSize;
+unsigned long MaxListCSize;
 
 QueueStar openList;
 QueueStar closedList;
@@ -185,7 +187,8 @@ omp_set_num_threads(4);
 
 	while (!flag_for_break){
 		//printf("%u\n", CurrentNode);
-		set_Maximum_node_Descendant_N(openList.QSize, &MaxListSize);
+		set_Maximum_node_Descendant_N(openList.QSize, &MaxListOSize);
+		set_Maximum_node_Descendant_N(closedList.QSize, &MaxListCSize);
 		if((CurrentNode==goal) || (openList.QSize==0)){
 			flag_for_break=true;
 		}
@@ -231,12 +234,15 @@ omp_set_num_threads(4);
 			push2Queue(&closedList, astar, CurrentNode);
 		}
 	}
-	printf("%f", omp_get_wtime() - tm);
+	printf("%f\n", omp_get_wtime() - tm);
 	if(CurrentNode!=goal){
 		printf("No Solutions");
 	}
 	else{
-		printf("%lu\n", MaxListSize);
+
+		printf("%lu\n", MaxListOSize);
+		printf("%lu\n", MaxListCSize);
+
 		printf("%f\n", astar[astar[goal].parent].g);
 		unsigned long traveler=goal;
 		unsigned long travelerDad=0;
